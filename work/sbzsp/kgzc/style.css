@@ -1,11 +1,10 @@
 /* =========================================
-   1. 基础重置 (修复核心痛点)
+   1. 基础重置 & 全局样式
    ========================================= */
 * {
     margin: 0;
     padding: 0;
-    /* 关键修复：确保伪元素也包含在盒模型内，否则圆点大小会算错导致歪斜 */
-    box-sizing: border-box; 
+    box-sizing: border-box; /* 关键：防止圆点和布局计算错误 */
 }
 
 *, *::before, *::after {
@@ -13,21 +12,22 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: smooth; /* 平滑滚动 */
 }
 
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #f4f4f4; /* 背景色 */
+    /* 背景色优化：浅灰背景让内容卡片更突出 */
+    background-color: #f9f9f9; 
     color: #333;
     line-height: 1.6;
 }
 
 /* =========================================
-   2. 导航栏样式
+   2. 顶部导航栏 (Sticky)
    ========================================= */
 .navbar {
-    background-color: #C8102E;
+    background-color: #C8102E; /* 福大红 */
     color: white;
     position: sticky;
     top: 0;
@@ -75,19 +75,62 @@ body {
 }
 
 /* =========================================
-   3. 布局容器
+   3. 头部大图 (Hero Banner) - 新增
+   ========================================= */
+.hero-banner {
+    width: 100%;
+    height: 400px; /* 大图高度 */
+    /* 建议替换为福大实景图 */
+    background-image: url('C:\\Users\\Zhang\\Documents\\demo\\Git\\collection-kungang-course\\work\\sbzsp\\image\\image_Hero Banner.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    margin-bottom: -40px; /* 让标题卡片压住图片底部，更有层次 */
+}
+
+.hero-overlay {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* 黑色半透明蒙层 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-overlay h1 {
+    color: white;
+    font-size: 3rem;
+    letter-spacing: 5px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    border: 2px solid white;
+    padding: 10px 30px;
+}
+
+/* =========================================
+   4. 布局容器 & 标题
    ========================================= */
 .container {
     max-width: 1000px;
-    margin: 50px auto;
+    margin: 0 auto; /* 上下边距由子元素控制 */
     padding: 0 20px;
     min-height: 100vh;
 }
 
 .header {
+    /* 关键：跳转偏移量，防止被导航栏遮挡 */
+    scroll-margin-top: 80px; 
+    
     text-align: center;
     margin-bottom: 60px;
-    padding-top: 20px;
+    
+    /* 样式美化：白色卡片风格 */
+    -webkit-backdrop-filter: blur(10px); 
+    backdrop-filter: blur(10px); /* 兼容 Safari */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 10; /* 保证压在Banner上面 */
 }
 
 .header h1 {
@@ -101,18 +144,17 @@ body {
 }
 
 /* =========================================
-   4. 时间轴 (关键修复区域)
+   5. 时间轴核心 (Timeline)
    ========================================= */
 .timeline {
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
-    /* 增加底部内边距，确保红线足够长 */
-    padding-bottom: 150px; 
-    padding-top: 50px;
+    padding-bottom: 150px; /* 保证红线足够长 */
+    padding-top: 20px;
 }
 
-/* --- 中轴线 (红线) --- */
+/* 红线 */
 .timeline::after {
     content: '';
     position: absolute;
@@ -121,16 +163,16 @@ body {
     top: 0;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%); /* 精确居中 */
+    transform: translateX(-50%);
     border-radius: 3px;
     z-index: 0;
 }
 
-/* --- 卡片容器 --- */
+/* 卡片容器 */
 .card {
     padding: 10px 40px;
     position: relative;
-    background-color: inherit;
+    background-color: transparent; /* 背景透明 */
     width: 50%;
     opacity: 0;
     transform: translateY(50px);
@@ -145,36 +187,26 @@ body {
 .left { left: 0; }
 .right { left: 50%; }
 
-/* --- 圆点 (已加大尺寸) --- */
+/* 圆圈 (已加大) */
 .card::after {
     content: '';
     position: absolute;
-    /* 【修改点1】将圆圈大小从 24px 增加到 36px */
-    width: 36px;
+    width: 36px; /* 大圆圈 */
     height: 36px;
     background-color: white;
     border: 5px solid #C8102E;
     border-radius: 50%;
-    /* 【修改点2】微调顶部距离，让大圆圈看起来更协调 */
     top: 15px; 
     z-index: 10;
-    /* 可选：加个白色外发光，让大圆圈更有层次感 */
-    box-shadow: 0 0 0 4px #f4f4f4; 
+    box-shadow: 0 0 0 4px #f9f9f9; /* 外圈颜色匹配页面背景 */
 }
 
-/* 【修改点3】重新计算偏移量以居中 */
-/* 新宽度36px，一半是18px。所以偏移量改为 -18px */
-
-.left::after {
-    right: -18px; /* 旧值是 -12px */
-}
-
-.right::after {
-    left: -18px; /* 旧值是 -12px */
-}
+/* 圆圈定位修正 */
+.left::after { right: -18px; }
+.right::after { left: -18px; }
 
 /* =========================================
-   5. 内容详情
+   6. 内容详情卡片
    ========================================= */
 .content {
     padding: 20px 30px;
@@ -217,7 +249,23 @@ body {
 }
 
 /* =========================================
-   6. 按钮与响应式
+   7. 底部页脚 (Footer) - 新增
+   ========================================= */
+.footer {
+    background-color: #333;
+    color: #bbb;
+    padding: 40px 0;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.footer p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   8. 回到顶部按钮
    ========================================= */
 #backBtn {
     display: none;
@@ -241,23 +289,271 @@ body {
     background-color: #a00d25;
 }
 
-/* 手机端适配 */
+/* =========================================
+   9. 响应式适配
+   ========================================= */
 @media screen and (max-width: 600px) {
     .nav-links { display: none; }
     .nav-container { justify-content: center; }
     
-    /* 手机模式：红线移到左侧 31px 处 */
-    .timeline::after { 
-        left: 31px; 
-        transform: translateX(0);
-    }
+    .timeline::after { left: 31px; transform: translateX(0); }
     
     .card { width: 100%; padding-left: 70px; padding-right: 25px; }
     
-    /* 【修改点4】手机模式下大圆圈的对齐修正 */
-    /* 红线中心在 34px。新圆圈一半是 18px。 */
-    /* Left = 34 - 18 = 16px */
-    .card::after { left: 16px; } /* 旧值是 22px */
+    .card::after { left: 16px; } /* 34px - 18px = 16px */
     
     .right { left: 0%; }
 }
+
+/* =========================================
+   学院风采页专属样式 (College Profile)
+   ========================================= */
+
+/* --- 1. 学院头部 Hero --- */
+.college-hero {
+    width: 100%;
+    height: 350px;
+    /* 建议替换为计算机学院楼（2号楼）的图片 */
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.hero-content h2 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    background-color: #C8102E; /* 福大红 */
+    padding: 5px 15px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* --- 2. 统计数据卡片 (Stats) --- */
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: -50px; /* 上移，压住 Header，形成层次感 */
+    margin-bottom: 60px;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap; /* 手机端换行 */
+}
+
+.stat-card {
+    background: white;
+    flex: 1;
+    min-width: 200px;
+    padding: 30px 20px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px); /* 悬停上浮 */
+}
+
+.stat-card i {
+    font-size: 2.5rem;
+    color: #C8102E;
+    margin-bottom: 15px;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.stat-card p {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* --- 3. 通用标题样式 --- */
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.divider {
+    width: 60px;
+    height: 4px;
+    background-color: #C8102E;
+    margin: 0 auto;
+}
+
+/* --- 4. 师资队伍网格 (Grid Layout) --- */
+.faculty-grid {
+    display: grid;
+    /* 自动适应列数，每列最小250px */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 80px;
+}
+
+.faculty-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    border: 1px solid #eee;
+}
+
+.faculty-card:hover {
+    box-shadow: 0 15px 30px rgba(200, 16, 46, 0.15); /* 红色阴影 */
+    transform: translateY(-5px);
+}
+
+.img-box {
+    height: 250px;
+    overflow: hidden;
+}
+
+.img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.faculty-card:hover .img-box img {
+    transform: scale(1.1); /* 图片放大效果 */
+}
+
+.faculty-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.faculty-info h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.faculty-info .title {
+    display: block;
+    color: #C8102E;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.faculty-info p {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    height: 40px; /* 固定高度，保证对齐 */
+    overflow: hidden;
+}
+
+.btn-profile {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid #C8102E;
+    color: #C8102E;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.btn-profile:hover {
+    background-color: #C8102E;
+    color: white;
+}
+
+/* --- 5. 学科平台 (Research) --- */
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 两列布局 */
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.program-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-left: 5px solid #C8102E; /* 左侧红条装饰 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.program-card:hover {
+    background-color: #C8102E;
+    color: white;
+}
+
+/* 悬停时改变文字和图标颜色 */
+.program-card:hover h3, 
+.program-card:hover p,
+.program-card:hover .icon-bg i {
+    color: white;
+}
+
+.icon-bg {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.icon-bg i {
+    color: #C8102E;
+    transition: 0.3s;
+}
+
+.program-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.program-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* --- 移动端适配 --- */
+@media screen and (max-width: 768px) {
+    .stats-container {
+        flex-direction: column; /* 数据卡片竖排 */
+        margin-top: 20px;
+    }
+    
+    .programs-grid {
+        grid-template-columns: 1fr; /* 学科单列 */
+    }
+    
+    .college-hero h1 { font-size: 2rem; }
+    .college-hero h2 { font-size: 1.2rem; }
+}
+
